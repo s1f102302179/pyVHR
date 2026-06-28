@@ -6,7 +6,19 @@
       "Bash(\"c:/Users/amon/Documents/khan/Face2ppg/pyVHR/.venv/Scripts/python.exe\" --version)",
       "Bash(git add:*)",
       "Bash(git commit -m \"$\\(cat <<''EOF''\nface2ppg: 自作4ブロックのスケルトンパッケージを追加\n\nSTEP2_pyVHR_Face2PPG_correspondence.md で確定した「pyVHRに無い4ブロック」を\nそれぞれ独立ファイルとして雛形化。各ファイルは I/O 仕様と論文での位置づけを\ndocstring に記載し、本体は NotImplementedError。\n\n- rigid_mesh_normalization.py  : 自作① 剛体メッシュ正規化\n- dmrs_grid.py                 : 自作②-a DMRSグリッド分割 + セルRGB\n- dmrs_selection.py            : 自作②-b DMRS選別 + BVP総和 \\(KFD/DFA/energy\\)\n- fir_kaiser_filter.py         : 自作③ FIR+Kaiser bandpass \\(β=25\\)\n- pipeline.py                  : pyVHR の sig_windowing / apply_filter /\n                                 RGB_sig_to_BVP\\(cpu_OMIT\\) と接続する全体配管\n\n🤖 Generated with [Claude Code]\\(https://claude.com/claude-code\\)\n\nCo-Authored-By: Claude <noreply@anthropic.com>\nEOF\n\\)\")",
-      "Bash(git commit:*)"
+      "Bash(git commit:*)",
+      "Bash(\"c:/Users/amon/Documents/khan/Face2ppg/pyVHR/.venv/Scripts/python.exe\" -m pip install --upgrade pip setuptools wheel)",
+      "Bash(\"c:/Users/amon/Documents/khan/Face2ppg/pyVHR/.venv/Scripts/python.exe\" -m pip install -r \"c:/Users/amon/Documents/khan/Face2ppg/pyVHR/face2ppg/requirements.txt\")",
+      "Bash(\"c:/Users/amon/Documents/khan/Face2ppg/pyVHR/.venv/Scripts/python.exe\" -c:*)",
+      "Bash(\"c:/Users/amon/Documents/khan/Face2ppg/pyVHR/.venv/Scripts/python.exe\" -c \"\nimport mediapipe.solutions.face_mesh as fm\nprint\\(''FACEMESH_TESSELATION edges :'', len\\(fm.FACEMESH_TESSELATION\\)\\)\nprint\\(''FACEMESH_FACE_OVAL edges   :'', len\\(fm.FACEMESH_FACE_OVAL\\)\\)\ninst = fm.FaceMesh\\(max_num_faces=1\\)\nprint\\(''FaceMesh\\(max_num_faces=1\\)  : OK''\\)\ninst.close\\(\\)\n\")",
+      "Bash(\"c:/Users/amon/Documents/khan/Face2ppg/pyVHR/.venv/Scripts/python.exe\" -c \"\nimport mediapipe as mp, os\nprint\\(''mediapipe path:'', os.path.dirname\\(mp.__file__\\)\\)\nprint\\(''attrs:'', sorted\\([a for a in dir\\(mp\\) if not a.startswith\\(''_''\\)]\\)[:30]\\)\n\")",
+      "Bash(\"c:/Users/amon/Documents/khan/Face2ppg/pyVHR/.venv/Scripts/python.exe\" -m pip freeze)",
+      "Bash(py -0p)",
+      "Bash(\"c:/Users/amon/Documents/khan/Face2ppg/pyVHR/.venv311/Scripts/python.exe\" -m pip install --upgrade pip setuptools wheel)",
+      "Bash(\"c:/Users/amon/Documents/khan/Face2ppg/pyVHR/.venv311/Scripts/python.exe\" -m pip install -r \"c:/Users/amon/Documents/khan/Face2ppg/pyVHR/face2ppg/requirements.txt\")",
+      "Bash(\"c:/Users/amon/Documents/khan/Face2ppg/pyVHR/.venv311/Scripts/python.exe\" -c:*)",
+      "Bash(\"c:/Users/amon/Documents/khan/Face2ppg/pyVHR/.venv311/Scripts/python.exe\" -m pip install:*)",
+      "Bash(git check-ignore:*)"
     ]
   }
 }
