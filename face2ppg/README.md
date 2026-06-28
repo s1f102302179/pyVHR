@@ -64,17 +64,47 @@ pyVHR 本体側 (`pyVHR/extraction/utils.sig_windowing`, `pyVHR/BVP/BVP.RGB_sig_
 `pyVHR/BVP/methods.cpu_OMIT`, `pyVHR/BVP/filters.apply_filter`) は別途
 `pyVHR_env.yml` または `pip install -e .` で利用可能にする想定。
 
+### インストール後に判明している既知の問題 (Python 3.13 + 最新wheel構成)
+
+検証日時点で確認した版: numpy 2.5.0 / scipy 1.18.0 / opencv-python 4.13.0 /
+mediapipe 0.10.35 / pytest 9.1.1 / Python 3.13.5。
+
+1. **mediapipe 0.10.35 の Python 3.13 wheel には `mediapipe.solutions` が含まれない**
+   (`mediapipe.tasks` 系のみ)。pyVHR v2.0 の `sig_processing.py` が使う
+   `mediapipe.solutions.face_mesh.FaceMesh` がそのままでは import できない。
+   - 対応候補:
+     (a) Python を 3.10/3.11 に下げて旧 mediapipe (0.10.x の solutions 同梱版) を入れる
+     (b) `mediapipe.tasks.vision.FaceLandmarker` (Tasks API) に書き換える層を自作①側に置く
+     (c) mediapipe の古いバージョン (例: 0.10.9 等) を 3.13 で入れられるか試す
+
+2. **pyVHR 本体は `numba` 他 (pyVHR_env.yml の依存) を必要とする**。
+   face2ppg/requirements.txt はあくまで「自作4ブロック単体」の最小依存であり、
+   pyVHR 本体を動かすには別途インストールが必要。
+
+これらは「自作4ブロックを書く」作業自体には支障しない (各ブロックは numpy/scipy/cv2
+だけで完結)。pyVHR 本体との結合テストを始めるタイミングで解消する。
+
 ---
 
-## ステップ③着手前に決めること
+## ステップ③着手前の決定事項
 
-`STEP2_pyVHR_Face2PPG_correspondence.md` §7 より:
+`STEP2_pyVHR_Face2PPG_correspondence.md` §7 への回答:
 
-1. 剛体メッシュ正規化のメッシュ定義
-   - 論文 85点 / 131三角形 を再現するか
-   - MediaPipe `FACEMESH_TESSELATION` (468点ベースの既製分割) を使うか
-2. 抽出窓 (OMIT入力) と MTF画像化窓 (60s/5s) の関係
-3. ablation の FIR Kaiser と Butterworth の固定パラメータ
+1. **剛体メッシュ正規化のメッシュ定義** → **MediaPipe 468点 + `FACEMESH_TESSELATION` を採用**
+   - 理由: 検出源が MediaPipe で確定済み。85点への対応付け再構築は労力が大きく、
+     その労力が分類精度に効く保証がない。MediaPipe テッセレーションはそのまま流用でき
+     実装が自然。
+   - 懸念: 論文の剛体メッシュ正規化 (85点 / 131三角形) を厳密再現してはいない。
+     ablation/再現性議論ではこの差分を明記すること。
+
+2. **抽出窓 / MTF画像化窓** → **60秒 / 5秒オーバーラップで統一**
+   - 理由: 最終段の CCT-LSTM パイプラインが 60s/5s の MTF 画像列を入力とする設計のため、
+     OMIT 抽出窓もこれに合わせる。
+   - 実装: `pyVHR.extraction.utils.sig_windowing(sig, wsize=60, stride=5, fps=fps)`。
+
+3. **ablation のフィルタ固定パラメータ** → **未定**
+   - 後続ステップで決定する。当面は `face2ppg.fir_kaiser_filter.fir_kaiser_bandpass`
+     のデフォルト (`minHz=0.75, maxHz=4.0, beta=25`) を仮置きとする。
 
 ---
 
