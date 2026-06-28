@@ -1,19 +1,57 @@
-# face2ppg minimal dependencies
-# Scope: only what the four custom blocks in this package need.
-# pyVHR v2.0 itself brings its own (heavier) deps via pyVHR_env.yml.
+# face2ppg dependencies (Python 3.11)
+#
+# Why pinned this way (see DESIGN_DECISIONS.md for full rationale):
+#  - mediapipe `solutions` API was removed in 0.10.30 (upstream issue #6192).
+#    pyVHR v2.0 uses mp.solutions.face_mesh.FaceMesh, so we MUST stay <= 0.10.29.
+#  - mediapipe 0.10.x requires numpy<2 -> pin numpy to 1.26.x.
+#  - mediapipe does NOT ship wheels for Python 3.13 -> target Python 3.11.
+#
+# Two sections:
+#   (A) face2ppg custom blocks (rigid mesh / DMRS / FIR Kaiser)
+#   (B) pyVHR v2.0 runtime extras (only those needed to import & run pyVHR;
+#       NOT the full pyVHR_env.yml).
 
-# Core numerics (used by every block)
-numpy>=1.23
+# -------------------------------------------------------------------------
+# (A) face2ppg custom blocks
+# -------------------------------------------------------------------------
 
-# FIR + Kaiser bandpass, PSD/energy, optional KFD/DFA helpers
-scipy>=1.10
+# Core numerics (used by every block). Must be <2 for mediapipe 0.10.x.
+numpy>=1.26,<2.0
 
-# Per-triangle affine warp for rigid mesh normalization
-opencv-python>=4.7
+# FIR + Kaiser bandpass (firwin/filtfilt), PSD/energy, KFD/DFA helpers.
+scipy>=1.11,<1.14
 
-# FaceMesh landmarks (input source for normalization)
-# NOTE: mediapipe wheel availability depends on Python version.
-mediapipe>=0.10
+# Per-triangle affine warp for rigid mesh normalization (cv2.getAffineTransform / warpAffine).
+opencv-python>=4.8,<4.11
 
-# Test runner for per-block unit checks
-pytest>=7
+# FaceMesh landmarks (input source for normalization).
+# Pinned to the largest py3.11 wheel that still ships `mediapipe.solutions`.
+# Note: 0.10.22..0.10.29 have no py3.11 wheel published, and 0.10.30+ removed
+# the `solutions` API entirely (upstream issue #6192). So 0.10.21 is the
+# correct choice for "solutions-bundled + py3.11".
+mediapipe==0.10.21
+
+# Test runner for per-block unit checks.
+pytest>=7,<9
+
+# -------------------------------------------------------------------------
+# (B) pyVHR v2.0 runtime extras
+#     Minimum set to make `import pyVHR` and the OMIT / windowing path work.
+#     Heavy/optional extras from pyVHR_env.yml (tensorflow, pytorch, cusignal,
+#     plotly, autorank, PySimpleGUI, ...) are intentionally NOT listed.
+# -------------------------------------------------------------------------
+
+numba>=0.58,<0.61        # JIT in pyVHR (sig_extraction_methods, filters)
+h5py>=3.9                # HDF5 IO for datasets
+matplotlib>=3.7,<3.10    # plotting utilities
+tqdm>=4.65               # progress bars
+scikit-image>=0.21       # image utilities used in extraction
+scikit-learn>=1.3,<1.5   # required by pyVHR/__init__ and analysis modules
+
+# NOT installed by this file (intentional):
+#   cupy           : pyVHR uses CUDA paths in sig_processing / BVP modules.
+#                    Requires CUDA toolkit + Python-version-matched wheel.
+#                    For CPU-only work on the face2ppg blocks we only need
+#                    pyVHR.extraction.utils.sig_windowing, which imports fine
+#                    without cupy. Install separately if a full pyVHR run
+#                    (sig_processing, RGB_sig_to_BVP) is needed.
