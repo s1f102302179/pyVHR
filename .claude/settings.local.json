@@ -1,0 +1,12 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(where:*)",
+      "Bash(python -m venv:*)",
+      "Bash(\"c:/Users/amon/Documents/khan/Face2ppg/pyVHR/.venv/Scripts/python.exe\" --version)",
+      "Bash(git add:*)",
+      "Bash(git commit -m \"$\\(cat <<''EOF''\nface2ppg: 自作4ブロックのスケルトンパッケージを追加\n\nSTEP2_pyVHR_Face2PPG_correspondence.md で確定した「pyVHRに無い4ブロック」を\nそれぞれ独立ファイルとして雛形化。各ファイルは I/O 仕様と論文での位置づけを\ndocstring に記載し、本体は NotImplementedError。\n\n- rigid_mesh_normalization.py  : 自作① 剛体メッシュ正規化\n- dmrs_grid.py                 : 自作②-a DMRSグリッド分割 + セルRGB\n- dmrs_selection.py            : 自作②-b DMRS選別 + BVP総和 \\(KFD/DFA/energy\\)\n- fir_kaiser_filter.py         : 自作③ FIR+Kaiser bandpass \\(β=25\\)\n- pipeline.py                  : pyVHR の sig_windowing / apply_filter /\n                                 RGB_sig_to_BVP\\(cpu_OMIT\\) と接続する全体配管\n\n🤖 Generated with [Claude Code]\\(https://claude.com/claude-code\\)\n\nCo-Authored-By: Claude <noreply@anthropic.com>\nEOF\n\\)\")",
+      "Bash(git commit:*)"
+    ]
+  }
+}
