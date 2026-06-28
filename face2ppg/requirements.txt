@@ -1,0 +1,19 @@
+# face2ppg minimal dependencies
+# Scope: only what the four custom blocks in this package need.
+# pyVHR v2.0 itself brings its own (heavier) deps via pyVHR_env.yml.
+
+# Core numerics (used by every block)
+numpy>=1.23
+
+# FIR + Kaiser bandpass, PSD/energy, optional KFD/DFA helpers
+scipy>=1.10
+
+# Per-triangle affine warp for rigid mesh normalization
+opencv-python>=4.7
+
+# FaceMesh landmarks (input source for normalization)
+# NOTE: mediapipe wheel availability depends on Python version.
+mediapipe>=0.10
+
+# Test runner for per-block unit checks
+pytest>=7
